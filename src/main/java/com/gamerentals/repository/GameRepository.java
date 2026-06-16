@@ -1,6 +1,6 @@
 package com.gamerentals.repository;
 
-import com.cinema.util.HibernateUtil;
+import com.gamerentals.util.HibernateUtil;
 import com.gamerentals.entity.*;
 import jakarta.persistence.*;
 

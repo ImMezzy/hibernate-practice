@@ -12,7 +12,7 @@
 
     <logger name="com.zaxxer.hikari" level="INFO"/>
 
-    <logger name="com.cinema" level="INFO"/>
+    <logger name="com.gamerentals" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>

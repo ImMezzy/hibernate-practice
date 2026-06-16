@@ -5,21 +5,19 @@
                                  https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
 
-    <persistence-unit name="cinema-pu" transaction-type="RESOURCE_LOCAL">
+    <persistence-unit name="gamerentals-pu" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>com.cinema.entity.Visitor</class>
-        <class>com.cinema.entity.Genre</class>
-        <class>com.cinema.entity.Film</class>
-        <class>com.cinema.entity.Hall</class>
-        <class>com.cinema.entity.SeatId</class>
-        <class>com.cinema.entity.Seat</class>
-        <class>com.cinema.entity.Screening</class>
-        <class>com.cinema.entity.Ticket</class>
+        <class>com.gamerentals.entity.Client</class>
+        <class>com.gamerentals.entity.Box</class>
+        <class>com.gamerentals.entity.Game</class>
+        <class>com.gamerentals.entity.BoxRent</class>
+        <class>com.gamerentals.entity.GameAttraction</class>
+        <class>com.gamerentals.entity.GameSession</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:postgresql://localhost:5435/cinema"/>
+                      value="jdbc:postgresql://localhost:5435/game_rentals"/>
             <property name="jakarta.persistence.jdbc.user"     value="postgres"/>
             <property name="jakarta.persistence.jdbc.password"  value="postgres"/>
             <property name="jakarta.persistence.jdbc.driver"
