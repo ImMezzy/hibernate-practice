@@ -34,9 +34,12 @@ public class Box {
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
     public Integer getBoxNumber() { return boxNumber; }
-    public void setBox_number(Integer boxNumber) { this.boxNumber = boxNumber; }
+    public void setBoxNumber(Integer boxNumber) { this.boxNumber = boxNumber; }
     public Integer getStatus() { return status; }
-    public void setStatus(Integer status) { this.status = status; }
+    public void setStatus(Integer status) {
+        if (status > 0 || status < 100) this.status = status;
+        else throw new IllegalArgumentException("Статус должен быть в диапазоне 0-100");
+    }
 
     @Override
     public boolean equals(Object o) {
