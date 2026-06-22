@@ -35,14 +35,15 @@ public class GameSessionRepository extends GenericRepository<GameSession, Intege
         }
     }
 
-    public List<GameSession> findActiveByClientId(String clientPassNumber) {
+    public List<GameSession> findActiveByClientIdWithGame(String passNumber) {
         try (EntityManager em = HibernateUtil.createEntityManager()) {
             return em.createQuery(
-                            "FROM GameSession gs " +
+                            "SELECT gs FROM GameSession gs " +
+                                    "JOIN FETCH gs.game " +
                                     "WHERE gs.client.passNumber = :passNumber " +
-                                    "AND gs.endTime > CURRENT_TIMESTAMP",
-                            GameSession.class)
-                    .setParameter("passNumber", clientPassNumber)
+                                    "AND gs.endTime > CURRENT_TIMESTAMP " +
+                                    "ORDER BY gs.endTime", GameSession.class
+                    ).setParameter("passNumber", passNumber)
                     .getResultList();
         }
     }

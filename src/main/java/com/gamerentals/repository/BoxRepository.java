@@ -11,6 +11,14 @@ public class BoxRepository extends GenericRepository<Box, Integer> {
         super(Box.class);
     }
 
+    public List<Box> findAllWithGames() {
+        try (EntityManager em = HibernateUtil.createEntityManager()) {
+            return em.createQuery(
+                    "SELECT b FROM Box b JOIN FETCH b.game ORDER BY b.id", Box.class
+            ).getResultList();
+        }
+    }
+
     public List<Box> findByGameId(Integer gameId) {
         try (EntityManager em = HibernateUtil.createEntityManager()) {
             return em.createQuery(

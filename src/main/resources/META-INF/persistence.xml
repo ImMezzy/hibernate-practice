@@ -17,7 +17,7 @@
 
         <properties>
             <property name="jakarta.persistence.jdbc.url"
-                      value="jdbc:postgresql://localhost:5435/game_rentals"/>
+                      value="jdbc:postgresql://localhost:5435/gamerentals"/>
             <property name="jakarta.persistence.jdbc.user"     value="postgres"/>
             <property name="jakarta.persistence.jdbc.password"  value="postgres"/>
             <property name="jakarta.persistence.jdbc.driver"
@@ -28,7 +28,7 @@
             <property name="hibernate.hikari.maximumPoolSize"  value="10"/>
             <property name="hibernate.hikari.minimumIdle"      value="2"/>
 
-            <property name="hibernate.hbm2ddl.auto"           value="create"/>
+            <property name="hibernate.hbm2ddl.auto"           value="update"/>
             <property name="hibernate.dialect"
                       value="org.hibernate.dialect.PostgreSQLDialect"/>
 

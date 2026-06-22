@@ -6,12 +6,6 @@ import jakarta.persistence.Persistence;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Управление жизненным циклом EntityManagerFactory.
- *
- * EntityManagerFactory создаётся ОДИН раз
- * EntityManager создаётся ДЛЯ КАЖДОЙ операции
- */
 public class HibernateUtil {
 
     private static final Logger log = LoggerFactory.getLogger(HibernateUtil.class);
@@ -31,18 +25,10 @@ public class HibernateUtil {
         return emf;
     }
 
-    /**
-     * Создаёт новый EntityManager.
-     * Аналог ConnectionManager.getConnection() из JDBC.
-     */
     public static EntityManager createEntityManager() {
         return getEntityManagerFactory().createEntityManager();
     }
 
-    /**
-     * Закрывает EntityManagerFactory.
-     * Вызывать при завершении приложения.
-     */
     public static void close() {
         if (emf != null && emf.isOpen()) {
             emf.close();

@@ -26,6 +26,10 @@ public class BoxRent {
     @Column(name = "date_of_return", nullable = false)
     private LocalDateTime dateOfReturn;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private RentStatus status = RentStatus.ACTIVE;
+
     @Column(nullable = false)
     private Integer fine = 0;
 
@@ -48,8 +52,11 @@ public class BoxRent {
     public void setDateOfRent(LocalDateTime dateOfRent) { this.dateOfRent = dateOfRent; }
     public LocalDateTime getDateOfReturn() { return dateOfReturn; }
     public void setDateOfReturn(LocalDateTime dateOfReturn) { this.dateOfReturn = dateOfReturn; }
+    public RentStatus getStatus() { return status; }
+    public void setStatus(RentStatus status) { this.status = status; }
     public Integer getFine() { return fine; }
     public void setFine(Integer fine) { this.fine = fine; }
+
 
     @Override
     public boolean equals(Object o) {

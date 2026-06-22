@@ -6,8 +6,13 @@ import java.util.*;
 @Entity
 @Table(name = "clients")
 public class Client {
+
     @Id
+    @Column(name = "pass_number")
     private String passNumber;
+
+    @Column(name = "phone_number", nullable = false, length = 11, unique = true)
+    private String phoneNumber;
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
@@ -15,20 +20,27 @@ public class Client {
     @Column(name = "last_name",nullable = false, length = 100)
     private String lastName;
 
-    @Column(name = "patronymic", nullable = false, length = 100)
+    @Column(name = "patronymic", length = 100)
     private String patronymic;
 
     protected Client() {}
 
-    public Client(String passNumber, String name, String last_name, String patronymic) {
+    public Client(String passNumber, String phoneNumber, String name, String last_name, String patronymic) {
         this.passNumber = passNumber;
+        this.phoneNumber = phoneNumber;
         this.name = name;
         this.lastName = last_name;
         this.patronymic = patronymic;
     }
 
+    public Client(String passNumber, String phoneNumber, String name, String lastName) {
+        this(passNumber, phoneNumber, name, lastName, null);
+    }
+
     public String getPassNumber() { return passNumber; }
     public void setPass_number(String passNumber) { this.passNumber = passNumber; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getLastName() { return lastName; }
@@ -47,5 +59,10 @@ public class Client {
     public int hashCode() { return Objects.hashCode(passNumber); }
 
     @Override
-    public String toString() { return String.format("Client{pass_number=%s, %s, %s, %s}", passNumber, name, lastName, patronymic); }
+    public String toString() {
+        return String.format("%s %s %s (паспорт: %s, тел.: %s)",
+                lastName, name,
+                patronymic != null ? patronymic : "",
+                passNumber, phoneNumber);
+    }
 }

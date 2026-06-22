@@ -36,14 +36,15 @@ public class GameAttractionRepository extends GenericRepository<GameAttraction, 
         }
     }
 
-    public List<GameAttraction> findActiveByClientId(String clientPassNumber) {
+    public List<GameAttraction> findActiveByClientIdWithGame(String passNumber) {
         try (EntityManager em = HibernateUtil.createEntityManager()) {
             return em.createQuery(
-                            "FROM GameAttraction ga " +
+                            "SELECT ga FROM GameAttraction ga " +
+                                    "JOIN FETCH ga.game " +
                                     "WHERE ga.client.passNumber = :passNumber " +
-                                    "AND ga.endTime > CURRENT_TIMESTAMP",
-                            GameAttraction.class)
-                    .setParameter("passNumber", clientPassNumber)
+                                    "AND ga.endTime > CURRENT_TIMESTAMP " +
+                                    "ORDER BY ga.endTime", GameAttraction.class
+                    ).setParameter("passNumber", passNumber)
                     .getResultList();
         }
     }

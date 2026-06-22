@@ -14,11 +14,28 @@ public class BoxRentRepository extends GenericRepository<BoxRent, Integer> {
 
     public BoxRentRepository() { super(BoxRent.class); }
 
-    public List<BoxRent> findByClientPassNumber(String clientPassNumber) {
+    public List<BoxRent> findAllWithDetails() {
         try (EntityManager em = HibernateUtil.createEntityManager()) {
             return em.createQuery(
-                    "FROM BoxRent br WHERE br.client.passNumber = :passNumber ORDER BY br.id",
-                    BoxRent.class).setParameter("passNumber", clientPassNumber).getResultList();
+                    "SELECT br FROM BoxRent br " +
+                            "JOIN FETCH br.client " +
+                            "JOIN FETCH br.box b " +
+                            "JOIN FETCH b.game " +
+                            "ORDER BY br.id", BoxRent.class
+            ).getResultList();
+        }
+    }
+
+    public List<BoxRent> findByClientPassNumberWithDetails(String passNumber) {
+        try (EntityManager em = HibernateUtil.createEntityManager()) {
+            return em.createQuery(
+                            "SELECT br FROM BoxRent br " +
+                                    "JOIN FETCH br.box b " +
+                                    "JOIN FETCH b.game " +
+                                    "WHERE br.client.passNumber = :passNumber " +
+                                    "ORDER BY br.id", BoxRent.class
+                    ).setParameter("passNumber", passNumber)
+                    .getResultList();
         }
     }
 
@@ -126,7 +143,11 @@ public class BoxRentRepository extends GenericRepository<BoxRent, Integer> {
 
             LocalDateTime actualReturnDate = LocalDateTime.now();
             long overdueDays = rent.getDateOfReturn().until(actualReturnDate, ChronoUnit.DAYS);
-            rent.setFine((int) (1000 * overdueDays));
+            if (overdueDays > 0) {
+                rent.setStatus(RentStatus.OVERDUE);
+                rent.setFine((int) (1000 * overdueDays));
+            }
+            else rent.setStatus(RentStatus.RETURNED);
             rent.setDateOfReturn(actualReturnDate);
             rent.getBox().setStatus(status);
 
