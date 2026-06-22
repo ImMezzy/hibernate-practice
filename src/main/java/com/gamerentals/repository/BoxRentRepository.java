@@ -163,4 +163,5 @@ public class BoxRentRepository extends GenericRepository<BoxRent, Integer> {
             em.close();
         }
     }
+
 }

@@ -45,4 +45,30 @@ public class BoxRepository extends GenericRepository<Box, Integer> {
             em.close();
         }
     }
+
+    public boolean deleteWithDependencies(int id) {
+        EntityManager em = HibernateUtil.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+
+            Box box = em.find(Box.class, id);
+            if (box == null) {
+                return false;
+            }
+
+            em.createQuery("DELETE FROM BoxRent br WHERE br.box.id = :boxId")
+                    .setParameter("boxId", id).executeUpdate();
+
+            em.remove(box);
+
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }

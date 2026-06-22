@@ -26,4 +26,34 @@ public class ClientRepository extends GenericRepository<Client, String>{
             ).setParameter("pattern", "%" + lastName + "%").getResultList();
         }
     }
+
+    public boolean deleteWithDependencies(String passNumber) {
+        EntityManager em = HibernateUtil.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+
+            Client client = em.find(Client.class, passNumber);
+            if (client == null) {
+                return false;
+            }
+
+            em.createQuery("DELETE FROM GameSession gs WHERE gs.client.passNumber = :pass")
+                    .setParameter("pass", passNumber).executeUpdate();
+            em.createQuery("DELETE FROM GameAttraction ga WHERE ga.client.passNumber = :pass")
+                    .setParameter("pass", passNumber).executeUpdate();
+            em.createQuery("DELETE FROM BoxRent br WHERE br.client.passNumber = :pass")
+                    .setParameter("pass", passNumber).executeUpdate();
+
+            em.remove(client);
+
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }

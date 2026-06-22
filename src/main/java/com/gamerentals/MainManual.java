@@ -276,8 +276,8 @@ public class MainManual {
         String passport = scanner.nextLine().trim();
         clientRepo.findById(passport).ifPresentOrElse(
                 c -> {
-                    boolean success = clientRepo.deleteById(passport);
-                    System.out.println(success ? "Клиент удалён!" : "Ошибка при удалении");
+                    boolean success = clientRepo.deleteWithDependencies(passport);
+                    System.out.println(success ? "Клиент и все связанные записи удалены!" : "Клиент не найден");
                 },
                 () -> System.out.println("Клиент не найден")
         );
@@ -390,7 +390,7 @@ public class MainManual {
         int id = Integer.parseInt(scanner.nextLine().trim());
         gameRepo.findById(id).ifPresentOrElse(
                 g -> {
-                    boolean success = gameRepo.deleteById(id);
+                    boolean success = gameRepo.deleteWithDependencies(id);
                     System.out.println(success ? "Игра удалена!" : "Ошибка при удалении");
                 },
                 () -> System.out.println("Игра не найдена")
@@ -521,13 +521,21 @@ public class MainManual {
     private static void deleteBox() {
         System.out.print("Введите ID коробки для удаления: ");
         int id = Integer.parseInt(scanner.nextLine().trim());
-        boxRepo.findById(id).ifPresentOrElse(
-                b -> {
-                    boolean success = boxRepo.deleteById(id);
-                    System.out.println(success ? "Коробка удалена!" : "Ошибка при удалении (возможно, есть активные аренды)");
-                },
-                () -> System.out.println("Коробка не найдена")
-        );
+
+        try (EntityManager em = HibernateUtil.createEntityManager()) {
+            Box box = em.createQuery(
+                    "SELECT b FROM Box b JOIN FETCH b.game WHERE b.id = :id", Box.class
+            ).setParameter("id", id).getResultStream().findFirst().orElse(null);
+
+            if (box != null) {
+                boolean success = boxRepo.deleteWithDependencies(id);
+                System.out.println(success ?
+                        "Коробка #" + box.getBoxNumber() + " (игра: " + box.getGame().getName() + ") удалена!"
+                        : "Коробка не найдена");
+            } else {
+                System.out.println("Коробка не найдена");
+            }
+        }
         pressEnterToContinue();
     }
 

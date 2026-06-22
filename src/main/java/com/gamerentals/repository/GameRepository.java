@@ -66,4 +66,36 @@ public class GameRepository extends GenericRepository<Game, Integer> {
             em.close();
         }
     }
+
+    public boolean deleteWithDependencies(int id) {
+        EntityManager em = HibernateUtil.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+
+            Game game = em.find(Game.class, id);
+            if (game == null) {
+                return false;
+            }
+
+            em.createQuery("DELETE FROM GameSession gs WHERE gs.game.id = :gameId")
+                    .setParameter("gameId", id).executeUpdate();
+            em.createQuery("DELETE FROM GameAttraction ga WHERE ga.game.id = :gameId")
+                    .setParameter("gameId", id).executeUpdate();
+            em.createQuery("DELETE FROM BoxRent br WHERE br.box.game.id = :gameId")
+                    .setParameter("gameId", id).executeUpdate();
+            em.createQuery("DELETE FROM Box b WHERE b.game.id = :gameId")
+                    .setParameter("gameId", id).executeUpdate();
+
+            em.remove(game);
+
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
 }
